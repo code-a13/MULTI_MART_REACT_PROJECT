@@ -21,6 +21,9 @@ export default function Navbar() {
           <Link to="/" className="text-gray-600 hover:text-blue-600 font-medium transition">
             Home
           </Link>
+          <Link to="/vendor" className="text-gray-600 hover:text-blue-600 font-medium transition flex items-center gap-1">
+  <Store size={20} /> Vendor Area
+</Link>
           <Link to="/cart" className="relative text-gray-600 hover:text-blue-600 transition">
             <ShoppingCart size={24} />
             {cartCount > 0 && (
