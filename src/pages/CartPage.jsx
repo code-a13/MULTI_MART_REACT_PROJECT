@@ -4,12 +4,11 @@ import { Trash2, ShoppingBag, ShieldCheck, ArrowRight, QrCode, CreditCard, Loade
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
-import QRCode from "react-qr-code"; // NEW: QR Code Generator
+import QRCode from "react-qr-code";
 
 export default function CartPage() {
   const { cart, dispatch } = useContext(CartContext);
   
-  // State to toggle between PayPal and UPI QR
   const [paymentMethod, setPaymentMethod] = useState("upi"); 
   const [isVerifying, setIsVerifying] = useState(false);
 
@@ -18,27 +17,18 @@ export default function CartPage() {
     toast.info(`${product.name.substring(0, 15)}... removed from cart.`);
   };
 
-  // Math Calculations (USD)
+  // Math Calculations (NATIVELY IN INR ₹)
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-  const tax = subtotal * 0.05;
-  const totalUSD = subtotal + tax;
+  const tax = subtotal * 0.05; // 5% tax
+  const totalINR = subtotal + tax;
 
-  // UPI Calculation (Assuming 1 USD = 83 INR for demonstration)
-  const conversionRate = 83;
-  const totalINR = Math.round(totalUSD * conversionRate);
-
-  // 🔴 IMPORTANT: Replace this with your actual GPay/PhonePe UPI ID!
-  // Example: "9876543210@ybl" or "aditya@okhdfcbank"
-  const myUPI_ID = "aditya@okicici"; 
-  const storeName = "MegaMall_React";
-  
   // The exact URI format mandated by the Indian Government (NPCI)
-  const upiString = `upi://pay?pa=${myUPI_ID}&pn=${storeName}&am=${totalINR}&cu=INR`;
+  const myUPI_ID = "positivevibesa13@okaxis"; 
+  const storeName = "Multi-Mart-React";
+  const upiString = `upi://pay?pa=${myUPI_ID}&pn=${storeName}&am=${totalINR.toFixed(2)}&cu=INR`;
 
-  // Simulate Backend Webhook Verification
   const handleSimulateUPIVerification = () => {
     setIsVerifying(true);
-    // Fake a 3-second network delay to simulate checking the bank servers
     setTimeout(() => {
       setIsVerifying(false);
       toast.success("UPI Payment Received Successfully! Order Confirmed.");
@@ -46,7 +36,6 @@ export default function CartPage() {
     }, 3000);
   };
 
-  // EMPTY STATE UI
   if (cart.length === 0) {
     return (
       <div className="py-20 flex flex-col items-center justify-center min-h-[60vh] text-center">
@@ -90,7 +79,8 @@ export default function CartPage() {
                     </div>
                     
                     <div className="flex flex-col items-center sm:items-end gap-3 min-w-[100px]">
-                      <span className="font-extrabold text-xl text-gray-900">${(item.price * item.qty).toFixed(2)}</span>
+                      {/* CHANGED DOLLAR TO RUPEE */}
+                      <span className="font-extrabold text-xl text-gray-900">₹{(item.price * item.qty).toFixed(2)}</span>
                       <button 
                         onClick={() => handleRemove(item)} 
                         className="text-red-500 hover:text-red-600 hover:bg-red-50 px-3 py-1.5 rounded-lg text-sm font-bold transition-colors flex items-center gap-1"
@@ -112,11 +102,13 @@ export default function CartPage() {
               <div className="space-y-4 text-gray-600 mb-6">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
-                  <span className="font-bold text-gray-900">${subtotal.toFixed(2)}</span>
+                  {/* CHANGED DOLLAR TO RUPEE */}
+                  <span className="font-bold text-gray-900">₹{subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Estimated Tax (5%)</span>
-                  <span className="font-bold text-gray-900">${tax.toFixed(2)}</span>
+                  {/* CHANGED DOLLAR TO RUPEE */}
+                  <span className="font-bold text-gray-900">₹{tax.toFixed(2)}</span>
                 </div>
               </div>
               
@@ -124,8 +116,8 @@ export default function CartPage() {
                 <div className="flex justify-between items-center">
                   <span className="text-lg font-bold text-gray-800">Total</span>
                   <div className="text-right">
-                    <span className="text-3xl font-extrabold text-gray-900 block">${totalUSD.toFixed(2)}</span>
-                    <span className="text-sm font-bold text-green-600">≈ ₹{totalINR} INR</span>
+                    {/* MAIN TOTAL IS NOW INR */}
+                    <span className="text-3xl font-extrabold text-gray-900 block">₹{totalINR.toFixed(2)}</span>
                   </div>
                 </div>
               </div>
@@ -153,7 +145,9 @@ export default function CartPage() {
                     <PayPalButtons 
                       style={{ layout: "vertical", shape: "rect", color: "blue" }}
                       createOrder={(data, actions) => {
-                        return actions.order.create({ purchase_units: [{ amount: { value: totalUSD.toFixed(2) } }] });
+                        // PAYPAL TRAP FIX: Convert INR back to USD for PayPal
+                        const convertedUSD = (totalINR / 83).toFixed(2);
+                        return actions.order.create({ purchase_units: [{ amount: { value: convertedUSD } }] });
                       }}
                       onApprove={(data, actions) => {
                         return actions.order.capture().then((details) => {
