@@ -13,14 +13,12 @@ export default function Navbar() {
   
   const navigate = useNavigate();
 
-  // Handle Navbar styling on scroll
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Prevent background scrolling when mobile menu is open
   useEffect(() => {
     if (isMobileOpen) {
       document.body.style.overflow = "hidden";
@@ -43,10 +41,7 @@ export default function Navbar() {
 
   return (
     <>
-      {/* =========================================
-          DESKTOP & MOBILE HEADER BAR 
-          ========================================= */}
-      <div className="fixed top-0 left-0 right-0 z-[100] flex justify-center pt-4 px-4 md:px-8 pointer-events-none">
+      <div className="fixed top-0 left-0 right-0 z-[120] flex justify-center pt-4 px-4 md:px-8 pointer-events-none">
         <nav className={`pointer-events-auto w-full max-w-6xl transition-all duration-300 rounded-2xl ${
           scrolled 
             ? "bg-white/90 backdrop-blur-xl border border-gray-200 shadow-lg py-3 px-4 md:px-6" 
@@ -54,7 +49,6 @@ export default function Navbar() {
         }`}>
           <div className="flex justify-between items-center">
             
-            {/* LOGO */}
             <Link to="/" onClick={() => setIsMobileOpen(false)} className="flex items-center gap-2 group z-50 focus:outline-none rounded-lg pr-2">
               <div className="bg-gray-900 p-2 md:p-2.5 rounded-xl text-white group-hover:rotate-12 transition-transform duration-300 shadow-md">
                 <Store size={20} className="md:w-6 md:h-6" />
@@ -64,7 +58,6 @@ export default function Navbar() {
               </span>
             </Link>
             
-            {/* DESKTOP SEARCH BAR */}
             <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-md mx-6 relative group">
               <button type="submit" className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 hover:text-gray-900 transition-colors cursor-pointer z-10" aria-label="Submit search">
                 <Search size={18} />
@@ -78,18 +71,14 @@ export default function Navbar() {
               />
             </form>
 
-            {/* DESKTOP NAVIGATION LINKS & ICONS */}
             <div className="flex gap-2 items-center z-50">
               <Link to="/vendor" className="hidden lg:flex px-4 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full font-bold transition-all items-center gap-2">
                 Vendor Area
               </Link>
-
               <div className="hidden md:block w-px h-5 bg-gray-200 mx-1"></div>
-
               <button className="hidden sm:flex p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all focus:outline-none" aria-label="User Profile">
                 <User size={20} />
               </button>
-
               <Link to="/cart" className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all group focus:outline-none" aria-label="Shopping Cart">
                 <ShoppingCart size={22} className="group-hover:scale-110 transition-transform" />
                 {cartCount > 0 && (
@@ -101,11 +90,9 @@ export default function Navbar() {
                   </motion.span>
                 )}
               </Link>
-
-              {/* MOBILE MENU TOGGLE BUTTON */}
               <button 
                 onClick={() => setIsMobileOpen(!isMobileOpen)} 
-                className="md:hidden p-2 text-gray-900 bg-gray-100 rounded-full ml-1 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors relative z-[110]"
+                className="md:hidden p-2 text-gray-900 bg-gray-100 rounded-full ml-1 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors relative z-[130]"
                 aria-label={isMobileOpen ? "Close Menu" : "Open Menu"}
               >
                 {isMobileOpen ? <X size={20} /> : <Menu size={20} />}
@@ -115,9 +102,6 @@ export default function Navbar() {
         </nav>
       </div>
 
-      {/* =========================================
-          ADVANCED MOBILE MENU OVERLAY
-          ========================================= */}
       <AnimatePresence>
         {isMobileOpen && (
           <motion.div 
@@ -127,13 +111,10 @@ export default function Navbar() {
             transition={{ duration: 0.3 }}
             className="fixed inset-0 z-[100] bg-gray-50/95 flex flex-col overflow-y-auto h-screen w-full"
           >
-            {/* Safe area padding & Top Layout */}
             <div className="pt-28 px-6 pb-6 flex-1 flex flex-col">
-              
-              {/* Profile/Greeting Card */}
               <motion.div 
                 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-                className="flex items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-gray-100 mb-6"
+                className="flex items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-gray-100 mb-6 mt-4"
               >
                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
                   <User size={24} />
@@ -144,7 +125,6 @@ export default function Navbar() {
                 </div>
               </motion.div>
 
-              {/* Advanced Search */}
               <motion.form 
                 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
                 onSubmit={handleSearch} className="relative w-full mb-8"
@@ -163,7 +143,6 @@ export default function Navbar() {
               
               <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-4 px-2">Browse Categories</p>
 
-              {/* App-like Navigation Links with Staggered Animation */}
               <div className="flex flex-col gap-2">
                 {[
                   { name: "Home", path: "/", icon: Home },
@@ -193,10 +172,8 @@ export default function Navbar() {
                   </motion.div>
                 ))}
               </div>
-
             </div>
 
-            {/* Bottom Sticky Action Area */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
               className="mt-auto bg-white p-6 border-t border-gray-100"
@@ -210,7 +187,6 @@ export default function Navbar() {
                 Vendor Dashboard
               </Link>
             </motion.div>
-
           </motion.div>
         )}
       </AnimatePresence>
