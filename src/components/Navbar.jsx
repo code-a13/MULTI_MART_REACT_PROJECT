@@ -1,5 +1,4 @@
 import { Link, useNavigate } from "react-router-dom";
-// FIX: Imported new icons for the advanced mobile menu
 import { ShoppingCart, Store, Search, User, Menu, X, ArrowRight, Home, Shirt, ShoppingBag, Laptop, LayoutDashboard } from "lucide-react";
 import { useContext, useState, useEffect } from "react";
 import { CartContext } from "../context/CartContext";
@@ -14,12 +13,14 @@ export default function Navbar() {
   
   const navigate = useNavigate();
 
+  // Handle Navbar styling on scroll
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Prevent background scrolling when mobile menu is open
   useEffect(() => {
     if (isMobileOpen) {
       document.body.style.overflow = "hidden";
@@ -42,7 +43,9 @@ export default function Navbar() {
 
   return (
     <>
-      {/* DESKTOP & MOBILE HEADER BAR */}
+      {/* =========================================
+          DESKTOP & MOBILE HEADER BAR 
+          ========================================= */}
       <div className="fixed top-0 left-0 right-0 z-[100] flex justify-center pt-4 px-4 md:px-8 pointer-events-none">
         <nav className={`pointer-events-auto w-full max-w-6xl transition-all duration-300 rounded-2xl ${
           scrolled 
@@ -51,6 +54,7 @@ export default function Navbar() {
         }`}>
           <div className="flex justify-between items-center">
             
+            {/* LOGO */}
             <Link to="/" onClick={() => setIsMobileOpen(false)} className="flex items-center gap-2 group z-50 focus:outline-none rounded-lg pr-2">
               <div className="bg-gray-900 p-2 md:p-2.5 rounded-xl text-white group-hover:rotate-12 transition-transform duration-300 shadow-md">
                 <Store size={20} className="md:w-6 md:h-6" />
@@ -60,6 +64,7 @@ export default function Navbar() {
               </span>
             </Link>
             
+            {/* DESKTOP SEARCH BAR */}
             <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-md mx-6 relative group">
               <button type="submit" className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 hover:text-gray-900 transition-colors cursor-pointer z-10" aria-label="Submit search">
                 <Search size={18} />
@@ -73,6 +78,7 @@ export default function Navbar() {
               />
             </form>
 
+            {/* DESKTOP NAVIGATION LINKS & ICONS */}
             <div className="flex gap-2 items-center z-50">
               <Link to="/vendor" className="hidden lg:flex px-4 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full font-bold transition-all items-center gap-2">
                 Vendor Area
@@ -80,11 +86,11 @@ export default function Navbar() {
 
               <div className="hidden md:block w-px h-5 bg-gray-200 mx-1"></div>
 
-              <button className="hidden sm:flex p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all" aria-label="User Profile">
+              <button className="hidden sm:flex p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all focus:outline-none" aria-label="User Profile">
                 <User size={20} />
               </button>
 
-              <Link to="/cart" className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all group" aria-label="Shopping Cart">
+              <Link to="/cart" className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all group focus:outline-none" aria-label="Shopping Cart">
                 <ShoppingCart size={22} className="group-hover:scale-110 transition-transform" />
                 {cartCount > 0 && (
                   <motion.span 
@@ -96,7 +102,7 @@ export default function Navbar() {
                 )}
               </Link>
 
-              {/* MOBILE MENU TOGGLE */}
+              {/* MOBILE MENU TOGGLE BUTTON */}
               <button 
                 onClick={() => setIsMobileOpen(!isMobileOpen)} 
                 className="md:hidden p-2 text-gray-900 bg-gray-100 rounded-full ml-1 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors relative z-[110]"
@@ -109,7 +115,9 @@ export default function Navbar() {
         </nav>
       </div>
 
-      {/* ADVANCED MOBILE MENU */}
+      {/* =========================================
+          ADVANCED MOBILE MENU OVERLAY
+          ========================================= */}
       <AnimatePresence>
         {isMobileOpen && (
           <motion.div 
@@ -155,7 +163,7 @@ export default function Navbar() {
               
               <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-4 px-2">Browse Categories</p>
 
-              {/* App-like Navigation Links */}
+              {/* App-like Navigation Links with Staggered Animation */}
               <div className="flex flex-col gap-2">
                 {[
                   { name: "Home", path: "/", icon: Home },
