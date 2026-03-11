@@ -1,15 +1,27 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Package, DollarSign, ShoppingCart, TrendingUp, Plus, Trash2, X } from "lucide-react";
+import { toast } from "react-toastify"; // Let's use the toast we installed earlier!
 
 export default function VendorDash() {
-  // Functional State Management
-  const [inventory, setInventory] = useState([
-    { id: 1, name: "Premium Leather Jacket", stock: 45, price: 120, status: "In Stock" },
-    { id: 2, name: "Wireless Earbuds", stock: 5, price: 45, status: "Low Stock" },
-  ]);
+  // Functional State Management with LocalStorage (Lazy Initialization)
+  const [inventory, setInventory] = useState(() => {
+    const saved = localStorage.getItem("vendorInventory");
+    if (saved) return JSON.parse(saved);
+    
+    // Default fallback if nothing is saved
+    return [
+      { id: 1, name: "Premium Leather Jacket", stock: 45, price: 120, status: "In Stock" },
+      { id: 2, name: "Wireless Earbuds", stock: 5, price: 45, status: "Low Stock" },
+    ];
+  });
   
   const [showForm, setShowForm] = useState(false);
   const [newProduct, setNewProduct] = useState({ name: "", price: "", stock: "" });
+
+  // THE MAGIC: Automatically save to LocalStorage whenever inventory changes
+  useEffect(() => {
+    localStorage.setItem("vendorInventory", JSON.stringify(inventory));
+  }, [inventory]);
 
   // Dynamic Statistics
   const totalRevenue = inventory.reduce((sum, item) => sum + (item.price * item.stock), 0);
@@ -30,14 +42,17 @@ export default function VendorDash() {
     setInventory([...inventory, productEntry]);
     setNewProduct({ name: "", price: "", stock: "" }); // Reset form
     setShowForm(false); // Hide form
+    toast.success(`${newProduct.name} added to inventory!`); // Success Feedback
   };
 
   const handleDelete = (id) => {
+    const itemToDelete = inventory.find(item => item.id === id);
     setInventory(inventory.filter(item => item.id !== id));
+    toast.info(`${itemToDelete?.name} removed from inventory.`); // Info Feedback
   };
 
   const StatCard = ({ title, value, icon: Icon, color }) => (
-    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 hover:-translate-y-1 transition-transform">
       <div className={`p-4 rounded-full ${color} text-white`}><Icon size={28} /></div>
       <div>
         <p className="text-gray-500 text-sm font-medium">{title}</p>
@@ -84,7 +99,7 @@ export default function VendorDash() {
               <input type="number" required min="0" value={newProduct.stock} onChange={e => setNewProduct({...newProduct, stock: e.target.value})} className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="50" />
             </div>
             <div className="md:col-span-4 mt-2">
-              <button type="submit" className="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition">Save to Inventory</button>
+              <button type="submit" className="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 active:scale-95 transition-all">Save to Inventory</button>
             </div>
           </form>
         </div>
@@ -115,7 +130,7 @@ export default function VendorDash() {
                     </span>
                   </td>
                   <td className="p-4 text-center">
-                    <button onClick={() => handleDelete(item.id)} className="text-red-500 hover:bg-red-50 p-2 rounded-full transition">
+                    <button onClick={() => handleDelete(item.id)} className="text-red-500 hover:bg-red-50 p-2 rounded-full active:scale-90 transition-all">
                       <Trash2 size={18} />
                     </button>
                   </td>
