@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
-// FIX: Added ArrowRight to the imports below!
-import { ShoppingCart, Store, Search, User, Menu, X, ArrowRight } from "lucide-react";
+// FIX: Imported new icons for the advanced mobile menu
+import { ShoppingCart, Store, Search, User, Menu, X, ArrowRight, Home, Shirt, ShoppingBag, Laptop, LayoutDashboard } from "lucide-react";
 import { useContext, useState, useEffect } from "react";
 import { CartContext } from "../context/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -42,6 +42,7 @@ export default function Navbar() {
 
   return (
     <>
+      {/* DESKTOP & MOBILE HEADER BAR */}
       <div className="fixed top-0 left-0 right-0 z-[100] flex justify-center pt-4 px-4 md:px-8 pointer-events-none">
         <nav className={`pointer-events-auto w-full max-w-6xl transition-all duration-300 rounded-2xl ${
           scrolled 
@@ -95,11 +96,11 @@ export default function Navbar() {
                 )}
               </Link>
 
+              {/* MOBILE MENU TOGGLE */}
               <button 
                 onClick={() => setIsMobileOpen(!isMobileOpen)} 
-                className="md:hidden p-2 text-gray-900 bg-gray-100 rounded-full ml-1 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors"
+                className="md:hidden p-2 text-gray-900 bg-gray-100 rounded-full ml-1 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors relative z-[110]"
                 aria-label={isMobileOpen ? "Close Menu" : "Open Menu"}
-                aria-expanded={isMobileOpen}
               >
                 {isMobileOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
@@ -108,47 +109,100 @@ export default function Navbar() {
         </nav>
       </div>
 
+      {/* ADVANCED MOBILE MENU */}
       <AnimatePresence>
         {isMobileOpen && (
           <motion.div 
-            initial={{ opacity: 0, y: -20 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[90] bg-white pt-28 px-6 pb-6 flex flex-col overflow-y-auto h-screen"
+            initial={{ opacity: 0, backdropFilter: "blur(0px)" }} 
+            animate={{ opacity: 1, backdropFilter: "blur(12px)" }} 
+            exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-[100] bg-gray-50/95 flex flex-col overflow-y-auto h-screen w-full"
           >
-            <form onSubmit={handleSearch} className="relative w-full mb-8">
-              <button type="submit" className="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400 hover:text-gray-900">
-                <Search size={20} />
-              </button>
-              <input 
-                type="text" 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search products..." 
-                className="w-full bg-gray-100 rounded-2xl py-4 pl-12 pr-4 text-lg outline-none font-medium focus:ring-4 focus:ring-gray-200 transition-all"
-                autoFocus 
-              />
-            </form>
-            
-            <div className="flex flex-col gap-6 text-2xl font-black text-gray-900">
-              <Link to="/" onClick={() => setIsMobileOpen(false)} className="pb-4 border-b border-gray-100 flex justify-between items-center group">
-                Home <ArrowRight size={20} className="text-gray-300 group-hover:text-gray-900 transition-colors"/>
-              </Link>
-              <Link to="/stores/mens clothing" onClick={() => setIsMobileOpen(false)} className="pb-4 border-b border-gray-100 flex justify-between items-center group">
-                Men's Fashion <ArrowRight size={20} className="text-gray-300 group-hover:text-gray-900 transition-colors"/>
-              </Link>
-              <Link to="/stores/womens clothing" onClick={() => setIsMobileOpen(false)} className="pb-4 border-b border-gray-100 flex justify-between items-center group">
-                Women's Fashion <ArrowRight size={20} className="text-gray-300 group-hover:text-gray-900 transition-colors"/>
-              </Link>
-              <Link to="/stores/electronics" onClick={() => setIsMobileOpen(false)} className="pb-4 border-b border-gray-100 flex justify-between items-center group">
-                Electronics <ArrowRight size={20} className="text-gray-300 group-hover:text-gray-900 transition-colors"/>
-              </Link>
+            {/* Safe area padding & Top Layout */}
+            <div className="pt-28 px-6 pb-6 flex-1 flex flex-col">
               
-              <Link to="/vendor" onClick={() => setIsMobileOpen(false)} className="pt-4 text-blue-600 flex justify-between items-center">
-                Vendor Dashboard <Store size={24} />
-              </Link>
+              {/* Profile/Greeting Card */}
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+                className="flex items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-gray-100 mb-6"
+              >
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
+                  <User size={24} />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Welcome back</p>
+                  <p className="text-lg font-black text-gray-900">Guest User</p>
+                </div>
+              </motion.div>
+
+              {/* Advanced Search */}
+              <motion.form 
+                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
+                onSubmit={handleSearch} className="relative w-full mb-8"
+              >
+                <button type="submit" className="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400 hover:text-blue-600 transition-colors">
+                  <Search size={20} />
+                </button>
+                <input 
+                  type="text" 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search Multi-Mart..." 
+                  className="w-full bg-white border border-gray-200 shadow-sm rounded-2xl py-4 pl-12 pr-4 text-base outline-none font-bold text-gray-800 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all"
+                />
+              </motion.form>
+              
+              <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-4 px-2">Browse Categories</p>
+
+              {/* App-like Navigation Links */}
+              <div className="flex flex-col gap-2">
+                {[
+                  { name: "Home", path: "/", icon: Home },
+                  { name: "Men's Fashion", path: "/stores/men's clothing", icon: Shirt },
+                  { name: "Women's Fashion", path: "/stores/women's clothing", icon: ShoppingBag },
+                  { name: "Electronics", path: "/stores/electronics", icon: Laptop },
+                ].map((item, index) => (
+                  <motion.div
+                    key={item.name}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.2 + (index * 0.05) }}
+                  >
+                    <Link 
+                      to={item.path} 
+                      onClick={() => setIsMobileOpen(false)} 
+                      className="flex items-center justify-between p-4 rounded-2xl bg-transparent hover:bg-white hover:shadow-sm transition-all group active:scale-[0.98]"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="bg-gray-100 p-3 rounded-xl text-gray-600 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
+                          <item.icon size={22} />
+                        </div>
+                        <span className="text-xl font-bold text-gray-800 group-hover:text-blue-600 transition-colors">{item.name}</span>
+                      </div>
+                      <ArrowRight size={18} className="text-gray-300 group-hover:text-blue-600 group-hover:translate-x-1 transition-all"/>
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+
             </div>
+
+            {/* Bottom Sticky Action Area */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
+              className="mt-auto bg-white p-6 border-t border-gray-100"
+            >
+              <Link 
+                to="/vendor" 
+                onClick={() => setIsMobileOpen(false)} 
+                className="flex items-center justify-center gap-3 w-full bg-gray-900 text-white py-4 rounded-2xl font-bold text-lg hover:bg-blue-600 active:scale-[0.98] transition-all shadow-lg shadow-gray-900/20"
+              >
+                <LayoutDashboard size={20} />
+                Vendor Dashboard
+              </Link>
+            </motion.div>
+
           </motion.div>
         )}
       </AnimatePresence>

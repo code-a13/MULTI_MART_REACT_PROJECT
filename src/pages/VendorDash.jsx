@@ -10,11 +10,13 @@ export default function VendorDash() {
   const [loginForm, setLoginForm] = useState({ email: "", password: "" });
 
   const [inventory, setInventory] = useState(() => {
+    // Check if data exists in local storage first
     const saved = localStorage.getItem("vendorInventory");
     if (saved) return JSON.parse(saved);
+    
+    // THE FIX: Removed the Leather Jacket, kept only the Flashlight
     return [
-      { id: 1, name: "Premium Leather Jacket", stock: 45, price: 1200, category: "men's clothing", status: "In Stock", image: "https://images.pexels.com/photos/298863/pexels-photo-298863.jpeg?w=200" },
-      { id: 2, name: "Mini Flashlight (Mega Sale)", stock: 500, price: 2, category: "electronics", status: "In Stock", image: "https://images.pexels.com/photos/3780681/pexels-photo-3780681.jpeg?w=200" }, 
+      { id: 2, name: "Mini Flashlight (Mega Sale)", stock: 500, price: 2, category: "electronics", status: "In Stock", image: "https://images.pexels.com/photos/3780681/pexels-photo-3780681.jpeg?w=200" }
     ];
   });
   
@@ -104,7 +106,6 @@ export default function VendorDash() {
 
   // VIEW 2: VENDOR DASHBOARD
   return (
-    // FIX IS HERE: Changed py-8 to pt-32 pb-8 to safely push content below your fixed navbar
     <div className="pt-32 pb-12 max-w-7xl mx-auto px-4">
       
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
