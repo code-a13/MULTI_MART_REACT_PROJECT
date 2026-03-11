@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 
 // 1. ALL GLOBAL PROVIDERS ACTIVATED
 import { CartProvider } from "./context/CartContext";
@@ -15,19 +16,38 @@ import StorePage from "./pages/StorePage";
 import CartPage from "./pages/CartPage";
 import VendorDash from "./pages/VendorDash";
 
-function App() {
+// 4. GLOBAL SCROLL RESTORATION COMPONENT
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  
+  useEffect(() => {
+    // Instantly snap the browser scroll to X:0, Y:0
+    window.scrollTo(0, 0);
+  }, [pathname]); // This runs every time the URL path changes
+  
+  return null; // This component is invisible
+}
+
+export default function App() {
   return (
     // THE MAIN SWITCH: Wrapping the whole app in AuthProvider
     <AuthProvider> 
       <CartProvider>
         <Router>
-          <div className="min-h-screen bg-gray-50 font-sans">
+          
+          {/* Invisible watcher that resets scroll on every route change */}
+          <ScrollToTop /> 
+          
+          <div className="min-h-screen bg-white font-sans flex flex-col">
             
             {/* GLOBAL NAVBAR */}
             <Navbar />
             
-            {/* MAIN CONTENT WRAPPER WITH PADDING FOR FIXED NAVBAR */}
-            <div className="container mx-auto px-4 pt-28 pb-8">
+            {/* MAIN CONTENT WRAPPER 
+                Removed the hardcoded "container mx-auto px-4 pt-28" 
+                so pages like Home can manage their own full-width premium layouts 
+            */}
+            <div className="flex-1 w-full relative">
               <Routes>
                 <Route path="/vendor" element={<VendorDash />} />
                 <Route path="/" element={<Home />} />
@@ -50,5 +70,3 @@ function App() {
     </AuthProvider>
   );
 }
-
-export default App;
