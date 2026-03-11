@@ -122,7 +122,6 @@ export default function Navbar() {
                 <div className="bg-gray-900 p-2 rounded-xl text-white">
                   <Menu size={18} />
                 </div>
-                <span className="text-xl font-black text-gray-900 tracking-tight">Navigation</span>
               </div>
               <button 
                 onClick={() => setIsMobileOpen(false)} 
