@@ -41,7 +41,8 @@ export default function Navbar() {
 
   return (
     <>
-      <div className="fixed top-0 left-0 right-0 z-[120] flex justify-center pt-4 px-4 md:px-8 pointer-events-none">
+      {/* DESKTOP & MAIN MOBILE HEADER */}
+      <div className="fixed top-0 left-0 right-0 z-[50] flex justify-center pt-4 px-4 md:px-8 pointer-events-none">
         <nav className={`pointer-events-auto w-full max-w-6xl transition-all duration-300 rounded-2xl ${
           scrolled 
             ? "bg-white/90 backdrop-blur-xl border border-gray-200 shadow-lg py-3 px-4 md:px-6" 
@@ -49,7 +50,7 @@ export default function Navbar() {
         }`}>
           <div className="flex justify-between items-center">
             
-            <Link to="/" onClick={() => setIsMobileOpen(false)} className="flex items-center gap-2 group z-50 focus:outline-none rounded-lg pr-2">
+            <Link to="/" className="flex items-center gap-2 group z-50 focus:outline-none rounded-lg pr-2">
               <div className="bg-gray-900 p-2 md:p-2.5 rounded-xl text-white group-hover:rotate-12 transition-transform duration-300 shadow-md">
                 <Store size={20} className="md:w-6 md:h-6" />
               </div>
@@ -90,31 +91,52 @@ export default function Navbar() {
                   </motion.span>
                 )}
               </Link>
+              
               <button 
-                onClick={() => setIsMobileOpen(!isMobileOpen)} 
-                className="md:hidden p-2 text-gray-900 bg-gray-100 rounded-full ml-1 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors relative z-[130]"
-                aria-label={isMobileOpen ? "Close Menu" : "Open Menu"}
+                onClick={() => setIsMobileOpen(true)} 
+                className="md:hidden p-2 text-gray-900 bg-gray-100 rounded-full ml-1 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors relative"
               >
-                {isMobileOpen ? <X size={20} /> : <Menu size={20} />}
+                <Menu size={20} />
               </button>
             </div>
           </div>
         </nav>
       </div>
 
+      {/* THE FIX: NATIVE APP FULL-SCREEN TAKEOVER MENU */}
       <AnimatePresence>
         {isMobileOpen && (
           <motion.div 
-            initial={{ opacity: 0, backdropFilter: "blur(0px)" }} 
-            animate={{ opacity: 1, backdropFilter: "blur(12px)" }} 
-            exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-[100] bg-gray-50/95 flex flex-col overflow-y-auto h-screen w-full"
+            // THE FIX: Slides up from the bottom of the screen like a real mobile app
+            initial={{ opacity: 0, y: "100%" }} 
+            animate={{ opacity: 1, y: 0 }} 
+            exit={{ opacity: 0, y: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            // THE FIX: h-[100dvh] fixes the mobile browser cut-off issue permanently
+            className="fixed inset-0 z-[9999] bg-gray-50 flex flex-col h-[100dvh] w-full overflow-hidden"
           >
-            <div className="pt-28 px-6 pb-6 flex-1 flex flex-col">
+            
+            {/* 1. INTERNAL MENU HEADER (Ensures 'X' is ALWAYS visible) */}
+            <div className="flex justify-between items-center p-4 bg-white border-b border-gray-100 shadow-sm shrink-0">
+              <div className="flex items-center gap-2">
+                <div className="bg-gray-900 p-2 rounded-xl text-white">
+                  <Menu size={18} />
+                </div>
+                <span className="text-xl font-black text-gray-900 tracking-tight">Navigation</span>
+              </div>
+              <button 
+                onClick={() => setIsMobileOpen(false)} 
+                className="p-2 bg-gray-100 text-gray-900 rounded-full hover:bg-gray-200 transition-colors active:scale-90"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* 2. SCROLLABLE MIDDLE CONTENT */}
+            <div className="flex-1 overflow-y-auto px-6 py-6">
               <motion.div 
                 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-                className="flex items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-gray-100 mb-6 mt-4"
+                className="flex items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-gray-100 mb-6"
               >
                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
                   <User size={24} />
@@ -159,13 +181,13 @@ export default function Navbar() {
                     <Link 
                       to={item.path} 
                       onClick={() => setIsMobileOpen(false)} 
-                      className="flex items-center justify-between p-4 rounded-2xl bg-transparent hover:bg-white hover:shadow-sm transition-all group active:scale-[0.98]"
+                      className="flex items-center justify-between p-4 rounded-2xl bg-white shadow-sm border border-gray-50 hover:border-blue-100 transition-all group active:scale-[0.98] mb-2"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="bg-gray-100 p-3 rounded-xl text-gray-600 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
+                        <div className="bg-gray-50 p-3 rounded-xl text-gray-600 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
                           <item.icon size={22} />
                         </div>
-                        <span className="text-xl font-bold text-gray-800 group-hover:text-blue-600 transition-colors">{item.name}</span>
+                        <span className="text-lg font-bold text-gray-800 group-hover:text-blue-600 transition-colors">{item.name}</span>
                       </div>
                       <ArrowRight size={18} className="text-gray-300 group-hover:text-blue-600 group-hover:translate-x-1 transition-all"/>
                     </Link>
@@ -174,19 +196,22 @@ export default function Navbar() {
               </div>
             </div>
 
+            {/* 3. FIXED BOTTOM ACTION AREA (Never gets cut off) */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
-              className="mt-auto bg-white p-6 border-t border-gray-100"
+              // THE FIX: pb-safe and extra padding ensures it floats above iPhone home bars and Android nav bars
+              className="bg-white p-6 pb-8 border-t border-gray-100 shrink-0 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]"
             >
               <Link 
                 to="/vendor" 
                 onClick={() => setIsMobileOpen(false)} 
-                className="flex items-center justify-center gap-3 w-full bg-gray-900 text-white py-4 rounded-2xl font-bold text-lg hover:bg-blue-600 active:scale-[0.98] transition-all shadow-lg shadow-gray-900/20"
+                className="flex items-center justify-center gap-3 w-full bg-gray-900 text-white py-4 rounded-2xl font-bold text-lg hover:bg-blue-700 active:scale-[0.98] transition-all shadow-lg shadow-gray-900/20"
               >
                 <LayoutDashboard size={20} />
                 Vendor Dashboard
               </Link>
             </motion.div>
+
           </motion.div>
         )}
       </AnimatePresence>
