@@ -6,15 +6,6 @@ import { api } from "../services/api";
 import { AlertTriangle, Home, ChevronRight, SlidersHorizontal, ArrowUpDown, Zap } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// UTILITY FUNCTION: Defined outside the component to prevent unnecessary recreations on re-render
-const formatINR = (amount) => {
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    maximumFractionDigits: 0,
-  }).format(amount);
-};
-
 export default function StorePage() {
   const { id } = useParams();
   const [products, setProducts] = useState([]);
@@ -27,41 +18,25 @@ export default function StorePage() {
 
   useEffect(() => {
     let isMounted = true;
-    
     const fetchProducts = async () => {
       setLoading(true);
       setError(false);
       try {
         const response = await api.get(`/products/category/${id}`);
-        
         if (isMounted) {
-          // 1. Process API Data (Convert USD to INR & Format)
-          const apiProducts = response.data.map(p => {
-            const rawInrPrice = Math.round(p.price * CONVERSION_RATE);
-            return {
-              ...p,
-              price: rawInrPrice,               // Keep raw number for math/sorting/filtering
-              formattedPrice: formatINR(rawInrPrice), // Create presentation string for the UI
-              isVendor: false
-            };
-          });
+          // 1. Process API Data (Convert USD to INR)
+          const apiProducts = response.data.map(p => ({
+            ...p,
+            price: Math.round(p.price * CONVERSION_RATE), // Indian-friendly pricing
+            isVendor: false
+          }));
 
           // 2. Process Local Vendor Data
           const savedVendorData = localStorage.getItem("vendorInventory");
-          let vendorProducts = [];
-          
-          if (savedVendorData) {
-             vendorProducts = JSON.parse(savedVendorData).map(p => {
-               // Assuming vendor prices also need conversion. If they are already in INR, remove the * CONVERSION_RATE
-               const rawInrPrice = Math.round(p.price * CONVERSION_RATE); 
-               return {
-                 ...p,
-                 price: rawInrPrice,
-                 formattedPrice: formatINR(rawInrPrice),
-                 isVendor: true
-               };
-             });
-          }
+          const vendorProducts = (savedVendorData ? JSON.parse(savedVendorData) : []).map(p => ({
+            ...p,
+            isVendor: true // Tag to identify local items
+          }));
 
           const matchedVendorProducts = vendorProducts.filter(
             item => item.category.toLowerCase() === id.toLowerCase()
@@ -80,18 +55,17 @@ export default function StorePage() {
     };
     
     fetchProducts();
-    
     return () => { isMounted = false; };
   }, [id]);
 
   let displayedProducts = [...products];
 
-  // Filtering Logic (Uses the raw numerical 'price')
+  // Filtering Logic (Indian Price Points)
   if (priceFilter === "under500") displayedProducts = displayedProducts.filter(p => p.price < 500);
   if (priceFilter === "500to2000") displayedProducts = displayedProducts.filter(p => p.price >= 500 && p.price <= 2000);
   if (priceFilter === "over2000") displayedProducts = displayedProducts.filter(p => p.price > 2000);
 
-  // Sorting Logic (Uses the raw numerical 'price')
+  // Sorting Logic
   if (sortBy === "price-asc") displayedProducts.sort((a, b) => a.price - b.price);
   if (sortBy === "price-desc") displayedProducts.sort((a, b) => b.price - a.price);
   if (sortBy === "rating") displayedProducts.sort((a, b) => (b.rating?.rate || 0) - (a.rating?.rate || 0));
@@ -186,7 +160,6 @@ export default function StorePage() {
                       <Zap size={10} fill="white"/> LOCAL VENDOR
                     </div>
                   )}
-                  {/* IMPORTANT: ProductCard now receives a product object that contains BOTH .price and .formattedPrice */}
                   <ProductCard product={{ ...product, name: product.title, storeName: id }} />
                 </motion.div>
               ))}
