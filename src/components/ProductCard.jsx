@@ -8,24 +8,30 @@ export default function ProductCard({ product }) {
 
   const handleAddToCart = () => {
     dispatch({ type: "ADD_TO_CART", payload: product });
-    toast.success(`${product.name.substring(0, 15)}... added to cart!`);
+    
+    // THE FIX: Defensive programming. Check for name, then title, then fallback.
+    const itemName = product?.name || product?.title || "Premium Item";
+    
+    toast.success(`${itemName.substring(0, 15)}... added to cart!`);
   };
 
   // Extract rating safely
-  const rating = product.rating?.rate || 4.5;
-  const reviews = product.rating?.count || 120;
+  const rating = product?.rating?.rate || 4.5;
+  const reviews = product?.rating?.count || 120;
   
   // THE FIX: Use the formatted string from StorePage!
-  // Fallback to a basic string just in case formattedPrice is missing
-  const displayPrice = product.formattedPrice || `₹${product.price}`;
+  const displayPrice = product?.formattedPrice || `₹${product?.price || 0}`;
 
   // Create a fake original price (20% higher) using the raw number, and format it to INR
-  const rawOriginalPrice = product.price * 1.2;
+  const rawOriginalPrice = (product?.price || 0) * 1.2;
   const displayOriginalPrice = new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',
     maximumFractionDigits: 0,
   }).format(rawOriginalPrice);
+
+  // Safe display name for the UI rendering
+  const displayName = product?.name || product?.title || "Premium Product";
 
   return (
     <div className="bg-white p-5 rounded-2xl border border-gray-100 flex flex-col h-full relative group hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
@@ -36,19 +42,20 @@ export default function ProductCard({ product }) {
 
       <div className="h-48 w-full bg-white flex items-center justify-center mb-5 overflow-hidden rounded-xl group-hover:opacity-90 transition-opacity">
         <img 
-          src={product.image || "https://via.placeholder.com/150"} 
-          alt={product.name} 
+          src={product?.image || "https://via.placeholder.com/150?text=No+Image"} 
+          alt={displayName} 
           className="max-h-full max-w-full object-contain group-hover:scale-110 transition-transform duration-500"
         />
       </div>
       
       <div className="flex flex-col flex-grow">
         <p className="text-xs font-extrabold text-gray-400 uppercase tracking-widest mb-1">
-          {product.storeName || "MegaMall"}
+          {product?.storeName || product?.category || "Multi-Mart"}
         </p>
         
+        {/* Safely render the name */}
         <h3 className="text-lg font-bold text-gray-800 line-clamp-2 mb-1 leading-snug group-hover:text-blue-600 transition-colors">
-          {product.name}
+          {displayName}
         </h3>
         
         <div className="flex items-center gap-1 mb-3">
@@ -59,7 +66,6 @@ export default function ProductCard({ product }) {
 
         <div className="mt-auto pt-4 border-t border-gray-100 flex justify-between items-end">
           <div>
-            {/* THE FIX: Removed the hardcoded $ symbols here */}
             <p className="text-xs text-gray-400 line-through mb-0.5">{displayOriginalPrice}</p>
             <span className="text-2xl font-extrabold text-gray-900">{displayPrice}</span>
           </div>

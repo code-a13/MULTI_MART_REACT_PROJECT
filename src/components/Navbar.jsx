@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingCart, Store, Search, User, Menu, X } from "lucide-react";
+// FIX: Added ArrowRight to the imports below!
+import { ShoppingCart, Store, Search, User, Menu, X, ArrowRight } from "lucide-react";
 import { useContext, useState, useEffect } from "react";
 import { CartContext } from "../context/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -7,46 +8,40 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function Navbar() {
   const { cart } = useContext(CartContext);
   
-  // 1. ALL REQUIRED STATE
   const [scrolled, setScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isMobileOpen, setIsMobileOpen] = useState(false); // Mobile menu state
+  const [isMobileOpen, setIsMobileOpen] = useState(false); 
   
   const navigate = useNavigate();
 
-  // 2. SCROLL DETECTION & BODY SCROLL LOCKING
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Enterprise Feature: Freeze background scrolling when mobile menu is open
   useEffect(() => {
     if (isMobileOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
     }
-    // Cleanup function in case component unmounts while menu is open
     return () => { document.body.style.overflow = "unset"; };
   }, [isMobileOpen]);
 
   const cartCount = cart.reduce((total, item) => total + item.qty, 0);
 
-  // 3. UNIVERSAL SEARCH HANDLER
   const handleSearch = (e) => {
     e.preventDefault(); 
     if (searchQuery.trim()) {
       navigate(`/search?q=${searchQuery.trim()}`);
       setSearchQuery("");
-      setIsMobileOpen(false); // Crucial: Close mobile menu after searching
+      setIsMobileOpen(false); 
     }
   };
 
   return (
     <>
-      {/* --- DESKTOP & MOBILE HEADER BAR --- */}
       <div className="fixed top-0 left-0 right-0 z-[100] flex justify-center pt-4 px-4 md:px-8 pointer-events-none">
         <nav className={`pointer-events-auto w-full max-w-6xl transition-all duration-300 rounded-2xl ${
           scrolled 
@@ -55,8 +50,7 @@ export default function Navbar() {
         }`}>
           <div className="flex justify-between items-center">
             
-            {/* LOGO */}
-            <Link to="/" onClick={() => setIsMobileOpen(false)} className="flex items-center gap-2 group z-50 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg pr-2">
+            <Link to="/" onClick={() => setIsMobileOpen(false)} className="flex items-center gap-2 group z-50 focus:outline-none rounded-lg pr-2">
               <div className="bg-gray-900 p-2 md:p-2.5 rounded-xl text-white group-hover:rotate-12 transition-transform duration-300 shadow-md">
                 <Store size={20} className="md:w-6 md:h-6" />
               </div>
@@ -65,7 +59,6 @@ export default function Navbar() {
               </span>
             </Link>
             
-            {/* DESKTOP SEARCH BAR */}
             <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-md mx-6 relative group">
               <button type="submit" className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 hover:text-gray-900 transition-colors cursor-pointer z-10" aria-label="Submit search">
                 <Search size={18} />
@@ -79,7 +72,6 @@ export default function Navbar() {
               />
             </form>
 
-            {/* NAVIGATION LINKS & ICONS */}
             <div className="flex gap-2 items-center z-50">
               <Link to="/vendor" className="hidden lg:flex px-4 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full font-bold transition-all items-center gap-2">
                 Vendor Area
@@ -103,7 +95,6 @@ export default function Navbar() {
                 )}
               </Link>
 
-              {/* MOBILE MENU TOGGLE BUTTON */}
               <button 
                 onClick={() => setIsMobileOpen(!isMobileOpen)} 
                 className="md:hidden p-2 text-gray-900 bg-gray-100 rounded-full ml-1 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors"
@@ -117,7 +108,6 @@ export default function Navbar() {
         </nav>
       </div>
 
-      {/* --- MOBILE FULLSCREEN MENU OVERLAY --- */}
       <AnimatePresence>
         {isMobileOpen && (
           <motion.div 
@@ -127,7 +117,6 @@ export default function Navbar() {
             transition={{ duration: 0.2 }}
             className="fixed inset-0 z-[90] bg-white pt-28 px-6 pb-6 flex flex-col overflow-y-auto h-screen"
           >
-            {/* Mobile Search Bar */}
             <form onSubmit={handleSearch} className="relative w-full mb-8">
               <button type="submit" className="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400 hover:text-gray-900">
                 <Search size={20} />
@@ -138,11 +127,10 @@ export default function Navbar() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search products..." 
                 className="w-full bg-gray-100 rounded-2xl py-4 pl-12 pr-4 text-lg outline-none font-medium focus:ring-4 focus:ring-gray-200 transition-all"
-                autoFocus // Automatically pulls up the mobile keyboard
+                autoFocus 
               />
             </form>
             
-            {/* Large Mobile Navigation Links */}
             <div className="flex flex-col gap-6 text-2xl font-black text-gray-900">
               <Link to="/" onClick={() => setIsMobileOpen(false)} className="pb-4 border-b border-gray-100 flex justify-between items-center group">
                 Home <ArrowRight size={20} className="text-gray-300 group-hover:text-gray-900 transition-colors"/>

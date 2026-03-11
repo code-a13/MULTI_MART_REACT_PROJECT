@@ -69,54 +69,59 @@ export default function StorePage() {
     <motion.div 
       initial={{ opacity: 0 }} 
       animate={{ opacity: 1 }} 
-      // THE FIX: pt-32 (mobile) and lg:pt-40 (desktop) clears the fixed navbar perfectly
       className="pb-20 pt-32 lg:pt-40 px-4 md:px-8 max-w-[1440px] mx-auto min-h-screen"
     >
-      {/* 1. BREADCRUMBS (Safe Area) */}
-      <nav className="flex items-center text-sm text-gray-400 mb-8" aria-label="Breadcrumb">
-        <Link to="/" className="hover:text-blue-600 flex items-center gap-1.5 transition-colors font-medium">
-          <Home size={14} /> Home
+      {/* 1. BREADCRUMBS */}
+      <nav className="flex items-center text-sm text-gray-400 mb-6" aria-label="Breadcrumb">
+        <Link to="/" className="hover:text-gray-900 flex items-center gap-1.5 transition-colors font-semibold">
+          <Home size={16} className="text-gray-500" /> Home
         </Link>
-        <ChevronRight size={14} className="mx-3 opacity-40" />
-        <span className="capitalize text-gray-900 font-bold bg-gray-100 px-3 py-1 rounded-full">{id} Store</span>
+        <ChevronRight size={14} className="mx-2 text-gray-300" />
+        <span className="capitalize text-gray-800 font-bold">{id}</span>
       </nav>
 
-      {/* 2. PREMIUM HEADER BANNER */}
-      <div className="relative bg-gray-900 rounded-[2.5rem] p-8 md:p-14 mb-12 overflow-hidden shadow-2xl isolate">
-        {/* Glow effect */}
-        <div className="absolute top-0 right-0 w-80 h-80 bg-blue-600/30 blur-[100px] -z-10 rounded-full"></div>
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-600/20 blur-[100px] -z-10 rounded-full"></div>
-        
-        <div className="relative z-10 max-w-2xl">
-          <motion.span 
-            initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}
-            className="bg-blue-600/20 text-blue-400 px-4 py-1.5 rounded-full text-[10px] font-black tracking-widest uppercase mb-6 inline-block border border-blue-500/20"
-          >
-            Premium Department
-          </motion.span>
-          <h1 className="text-5xl md:text-7xl font-black text-white capitalize mb-6 tracking-tighter leading-none">
-            {id}
-          </h1>
-          <p className="text-gray-400 text-lg md:text-xl leading-relaxed">
-            Discover the finest selection of {id} products. Curated for quality and delivered with speed.
-          </p>
+      {/* 2. PREMIUM ENTERPRISE BANNER - COMPACT VERSION */}
+      <div className="relative rounded-2xl overflow-hidden mb-8 shadow-sm border border-gray-200/60 bg-white">
+        <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] opacity-30"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 opacity-[0.97]"></div>
+        <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-blue-600/10 to-transparent pointer-events-none"></div>
+        <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl"></div>
+
+        {/* THE FIX: Reduced paddings and min-heights here! */}
+        <div className="relative z-10 flex flex-col justify-center px-6 md:px-12 py-8 md:py-10 min-h-[160px] md:min-h-[200px]">
+          <div className="max-w-3xl">
+            <div className="flex items-center gap-3 mb-3">
+              <span className="h-px w-6 bg-blue-500 rounded-full"></span>
+              <span className="text-blue-400 text-[10px] font-black tracking-[0.2em] uppercase">
+                Premium Collection
+              </span>
+            </div>
+            
+            {/* THE FIX: Adjusted text size to match the smaller box */}
+            <h1 className="text-3xl md:text-5xl font-black text-white capitalize mb-2 tracking-tight leading-none">
+              {id} <span className="text-gray-400 font-light hidden sm:inline-block">| Shop</span>
+            </h1>
+            
+            <p className="text-gray-300 text-sm md:text-base max-w-xl font-medium leading-relaxed">
+              Explore our curated selection of high-quality {id}. Designed for performance and built to last.
+            </p>
+          </div>
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-8 md:gap-12">
+      <div className="flex flex-col lg:flex-row gap-8 md:gap-10">
         
-        {/* 3. STICKY SIDEBAR FILTERS */}
-        <div className="w-full lg:w-64 xl:w-72 shrink-0">
-          {/* sticky top-36 ensures it stays below the navbar as you scroll */}
-          <div className="bg-white p-8 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 sticky top-36">
-            <h3 className="text-xl font-black text-gray-900 mb-8 flex items-center gap-3">
-              <SlidersHorizontal size={20} className="text-blue-600" /> Filters
+        {/* 3. SIDEBAR FILTERS */}
+        <div className="w-full lg:w-64 shrink-0">
+          <div className="bg-white p-6 rounded-2xl border border-gray-200 sticky top-32">
+            <h3 className="text-lg font-extrabold text-gray-900 mb-6 flex items-center gap-2 pb-4 border-b border-gray-100">
+              <SlidersHorizontal size={18} className="text-gray-500" /> Filters
             </h3>
             
-            <div className="space-y-8">
+            <div className="space-y-6">
               <div>
-                <p className="font-black text-gray-400 mb-5 text-[10px] uppercase tracking-widest">Price Range</p>
-                <div className="flex flex-col gap-2.5">
+                <p className="font-bold text-gray-900 mb-4 text-sm">Price Range</p>
+                <div className="flex flex-col gap-2">
                   {[
                     { id: "all", label: "All Prices" },
                     { id: "under500", label: "Under ₹500" },
@@ -126,10 +131,10 @@ export default function StorePage() {
                     <button 
                       key={opt.id}
                       onClick={() => setPriceFilter(opt.id)}
-                      className={`w-full text-left px-5 py-3.5 rounded-2xl text-sm font-bold transition-all duration-300 ${
+                      className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
                         priceFilter === opt.id 
-                        ? 'bg-gray-900 text-white shadow-xl translate-x-1' 
-                        : 'bg-gray-50 text-gray-500 hover:bg-gray-100 hover:translate-x-1'
+                        ? 'bg-gray-900 text-white shadow-md' 
+                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                       }`}
                     >
                       {opt.label}
@@ -143,16 +148,17 @@ export default function StorePage() {
 
         {/* 4. MAIN PRODUCT GRID SECTION */}
         <div className="flex-1">
-          <div className="flex flex-col sm:flex-row justify-between items-center mb-10 gap-6">
-            <div>
-              <p className="text-gray-400 font-medium">Showing <span className="text-gray-900 font-black">{displayedProducts.length}</span> results</p>
-            </div>
-            <div className="flex items-center gap-3 bg-gray-50 px-6 py-3 rounded-full border border-gray-100 group transition-all focus-within:ring-4 focus-within:ring-gray-100">
-              <ArrowUpDown size={16} className="text-gray-400 group-hover:text-blue-600 transition-colors"/>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 pb-4 border-b border-gray-100">
+            <p className="text-gray-500 font-medium text-sm">
+              Showing <span className="text-gray-900 font-bold">{displayedProducts.length}</span> results
+            </p>
+            
+            <div className="flex items-center gap-2 bg-white border border-gray-200 px-4 py-2 rounded-xl hover:border-gray-300 transition-colors">
+              <ArrowUpDown size={14} className="text-gray-400"/>
               <select 
                 value={sortBy} 
                 onChange={(e) => setSortBy(e.target.value)} 
-                className="outline-none bg-transparent text-sm font-bold cursor-pointer text-gray-800"
+                className="outline-none bg-transparent text-sm font-semibold cursor-pointer text-gray-700"
               >
                 <option value="default">Default Sort</option>
                 <option value="price-asc">Price: Low to High</option>
@@ -162,18 +168,19 @@ export default function StorePage() {
             </div>
           </div>
 
-          <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8 md:gap-10">
+          <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             <AnimatePresence mode="popLayout">
               {loading ? (
                 Array.from({ length: 6 }).map((_, i) => <ProductSkeleton key={i} />)
               ) : displayedProducts.map((product) => (
                 <motion.div 
-                  layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}
-                  key={product.id} className="relative"
+                  layout initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                  key={product.id} className="relative h-full"
                 >
                   {product.isVendor && (
-                    <div className="absolute top-4 left-4 z-10 bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-[10px] font-black px-4 py-1.5 rounded-full shadow-lg flex items-center gap-2 border border-white/20">
-                      <Zap size={10} fill="white"/> VERIFIED VENDOR
+                    <div className="absolute top-3 left-3 z-20 bg-emerald-500 text-white text-[9px] font-black px-3 py-1 rounded-md shadow-sm flex items-center gap-1 tracking-wider">
+                      <Zap size={10} fill="white"/> VERIFIED
                     </div>
                   )}
                   <ProductCard product={{ ...product, name: product.title, storeName: id }} />

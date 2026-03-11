@@ -14,7 +14,7 @@ export default function VendorDash() {
     if (saved) return JSON.parse(saved);
     return [
       { id: 1, name: "Premium Leather Jacket", stock: 45, price: 1200, category: "men's clothing", status: "In Stock", image: "https://images.pexels.com/photos/298863/pexels-photo-298863.jpeg?w=200" },
-      { id: 2, name: "Mini Flashlight (Mega Sale)", stock: 500, price: 2, category: "electronics", status: "In Stock", image: "https://images.pexels.com/photos/3780681/pexels-photo-3780681.jpeg?w=200" }, // The ₹2 Product!
+      { id: 2, name: "Mini Flashlight (Mega Sale)", stock: 500, price: 2, category: "electronics", status: "In Stock", image: "https://images.pexels.com/photos/3780681/pexels-photo-3780681.jpeg?w=200" }, 
     ];
   });
   
@@ -76,7 +76,7 @@ export default function VendorDash() {
   // VIEW 1: LOGIN GATE
   if (!user || user.role !== "vendor") {
     return (
-      <div className="min-h-[70vh] flex items-center justify-center px-4">
+      <div className="min-h-[70vh] flex items-center justify-center px-4 pt-24">
         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white p-8 rounded-3xl shadow-xl border border-gray-100 w-full max-w-md text-center">
           <div className="bg-blue-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
             <Lock size={28} className="text-blue-600" />
@@ -104,7 +104,8 @@ export default function VendorDash() {
 
   // VIEW 2: VENDOR DASHBOARD
   return (
-    <div className="py-8 max-w-7xl mx-auto px-4">
+    // FIX IS HERE: Changed py-8 to pt-32 pb-8 to safely push content below your fixed navbar
+    <div className="pt-32 pb-12 max-w-7xl mx-auto px-4">
       
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
@@ -123,7 +124,6 @@ export default function VendorDash() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-        {/* CHANGED DOLLAR TO RUPEE HERE */}
         <StatCard title="Potential Revenue" value={`₹${totalRevenue.toLocaleString()}`} icon={DollarSign} color="bg-emerald-500" />
         <StatCard title="Active Listings" value={activeProducts} icon={Package} color="bg-blue-500" />
         <StatCard title="Pending Orders" value="12" icon={ShoppingCart} color="bg-orange-500" />
@@ -131,7 +131,7 @@ export default function VendorDash() {
       </div>
 
       {showForm && (
-        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="bg-white p-8 rounded-3xl shadow-lg border border-blue-100 mb-8">
+        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="bg-white p-8 rounded-3xl shadow-lg border border-blue-100 mb-8 overflow-hidden">
           <h2 className="text-xl font-extrabold text-gray-800 mb-6 flex items-center gap-2">
             <Package className="text-blue-600"/> Upload New Product
           </h2>
@@ -153,7 +153,6 @@ export default function VendorDash() {
             </div>
 
             <div className="md:col-span-3">
-              {/* CHANGED DOLLAR TO RUPEE HERE */}
               <label className="block text-sm font-bold text-gray-700 mb-2">Price (₹)</label>
               <input type="number" step="0.01" required min="1" value={newProduct.price} onChange={e => setNewProduct({...newProduct, price: e.target.value})} className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" placeholder="99.99" />
             </div>
@@ -168,7 +167,7 @@ export default function VendorDash() {
               <input type="number" required min="0" value={newProduct.stock} onChange={e => setNewProduct({...newProduct, stock: e.target.value})} className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" placeholder="50" />
             </div>
 
-            <div className="md:col-span-12 flex items-center gap-4 p-4 bg-blue-50/50 rounded-xl border border-dashed border-blue-200 mt-2">
+            <div className="md:col-span-12 flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 bg-blue-50/50 rounded-xl border border-dashed border-blue-200 mt-2">
               <div className="w-16 h-16 bg-white rounded-lg border border-gray-200 flex items-center justify-center overflow-hidden flex-shrink-0 shadow-sm">
                 {newProduct.image ? (
                   <img src={newProduct.image} alt="Preview" className="w-full h-full object-cover" onError={(e) => e.target.src="https://via.placeholder.com/150?text=Invalid+Link"} />
@@ -176,11 +175,11 @@ export default function VendorDash() {
                   <ImageIcon className="text-gray-300" size={24} />
                 )}
               </div>
-              <div>
+              <div className="flex-1">
                 <p className="text-sm font-bold text-gray-800">Live Image Preview</p>
                 <p className="text-xs text-gray-500">Paste a valid URL to see your product image here before publishing.</p>
               </div>
-              <button type="submit" className="ml-auto bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-emerald-700 active:scale-95 transition-all shadow-md">
+              <button type="submit" className="w-full sm:w-auto mt-2 sm:mt-0 bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-emerald-700 active:scale-95 transition-all shadow-md">
                 Publish
               </button>
             </div>
@@ -194,9 +193,9 @@ export default function VendorDash() {
           <h2 className="font-bold text-gray-700">Live Inventory</h2>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-left border-collapse min-w-[800px]">
             <thead>
-              <tr className="text-gray-400 text-xs uppercase tracking-widest bg-white">
+              <tr className="text-gray-400 text-xs uppercase tracking-widest bg-white border-b border-gray-100">
                 <th className="p-5 font-bold">Product</th>
                 <th className="p-5 font-bold">Category</th>
                 <th className="p-5 font-bold">Price</th>
@@ -209,7 +208,7 @@ export default function VendorDash() {
               {inventory.map((item) => (
                 <tr key={item.id} className="hover:bg-gray-50/80 transition-colors group">
                   <td className="p-5">
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4 min-w-[200px]">
                       <div className="w-12 h-12 rounded-lg border border-gray-200 overflow-hidden bg-white flex-shrink-0">
                         <img src={item.image} alt={item.name} className="w-full h-full object-cover" onError={(e) => { e.target.src = "https://via.placeholder.com/50?text=No+Img" }}/>
                       </div>
@@ -217,11 +216,10 @@ export default function VendorDash() {
                     </div>
                   </td>
                   <td className="p-5 font-bold text-gray-500 capitalize text-sm">{item.category}</td>
-                  {/* CHANGED DOLLAR TO RUPEE HERE */}
                   <td className="p-5 font-bold text-gray-800">₹{parseFloat(item.price).toFixed(2)}</td>
                   <td className="p-5 font-medium text-gray-600">{item.stock}</td>
                   <td className="p-5">
-                    <span className={`px-3 py-1 rounded-full text-[10px] uppercase tracking-wider font-extrabold ${item.status === 'In Stock' ? 'bg-emerald-100 text-emerald-700' : item.status === 'Low Stock' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'}`}>
+                    <span className={`px-3 py-1 rounded-full text-[10px] uppercase tracking-wider font-extrabold whitespace-nowrap ${item.status === 'In Stock' ? 'bg-emerald-100 text-emerald-700' : item.status === 'Low Stock' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'}`}>
                       {item.status}
                     </span>
                   </td>
